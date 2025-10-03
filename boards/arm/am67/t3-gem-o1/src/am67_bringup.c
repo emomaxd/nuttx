@@ -32,6 +32,8 @@
 
 #include "t3-gem-o1.h"
 
+#include "am67_i2c.h"
+
 
 int am67_bringup(void)
 {
@@ -40,12 +42,54 @@ int am67_bringup(void)
   #ifdef CONFIG_FS_PROCFS
   /* Mount the procfs file system */
 
+  /* TODO: use mount(...) which is userspace function and has better error 
+   * handling than nx_mount(...)
+   * */
   ret = nx_mount(NULL, "/proc", "procfs", 0, NULL);
   if (ret < 0)
   {
     syslog(LOG_ERR, "ERROR: Failed to mount procfs at /proc: %d\n", ret);
   }
-  #endif
   
-  return ret;
+#if 0 /* CHECK FOR CONFIG_RPMSG */
+  /* Mount the RPMSG file system 
+   * equivalent of this nsh code from documentation:
+   * ==> mount -t rpmsgfs -o cpu=master,fs=/proc /proc.master
+   * */
+  ret = mount(NULL, "/proc.master", "rpmsgfs", 0, "cpu=master,fs=/proc");
+  if (ret < 0)
+  {
+    syslog(LOG_ERR, "ERROR: Failed to mount rpmsgfs at /proc.master: %d\n", ret);
+  }
+#endif
+
+  #endif /* CONFIG_FS_PROCFS */
+
+  /* Register I2C driver as /dev/i2c0 for nuttx api */
+#ifdef CONFIG_AM67_I2C
+    struct i2c_master_s *i2c0;
+    
+    /* Initialize I2C0 */
+    i2c0 = am67_i2c_initialize(0, AM67_I2C0_BASE, AM67_I2C0_IRQ
+		    AM67_I2C0_GPIO_SCL, AM67_I2C0_GPIO_SDA);
+    if (!i2c0)
+    {
+        syslog(LOG_ERR, "ERROR: Failed to initialize I2C0\n");
+        return -ENODEV;
+    }
+#endif
+
+#ifdef CONFIG_AM67_I2C1
+    struct i2c_master_s *i2c1;
+    
+    i2c1 = am67_i2c_initialize(1, AM67_I2C1_BASE, AM67_I2C1_IRQ, 
+		    AM67_I2C1_GPIO_SCL, AM67_I2C1_GPIO_SDA);
+    if (!i2c1)
+    {
+        syslog(LOG_ERR, "ERROR: Failed to initialize I2C1\n");
+    }
+#endif
+    /* Add I2C2, I2C3, I2C4 if needed */
+
+    return ret;
 }

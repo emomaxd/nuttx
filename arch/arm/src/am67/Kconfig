@@ -1,8 +1,104 @@
 if ARCH_CHIP_AM67
 
 config ARCH_CORTEXR5
-       bool "Cortex-R5"
-       select ARCH_ARMV7R
-       default y
+    bool "Cortex-R5"
+    select ARCH_ARMV7R
+    default y
+
+menu "TI AM67A Peripheral Support"
+
+# UART
+menu "UART Controllers"
+config AM67_UART0
+    bool "UART 0"
+    default y
+    select UART0_SERIALDRIVER
+    select ARCH_HAVE_SERIAL_TERMIOS
+
+config AM67_UART1
+    bool "UART 1"
+    default n
+    select UART1_SERIALDRIVER
+    select ARCH_HAVE_SERIAL_TERMIOS
+
+config AM67_UART2
+    bool "UART 2"
+    default n
+    select UART2_SERIALDRIVER
+    select ARCH_HAVE_SERIAL_TERMIOS
+
+config AM67_UART3
+    bool "UART 3"
+    default n
+    select UART3_SERIALDRIVER
+    select ARCH_HAVE_SERIAL_TERMIOS
+
+config AM67_UART4
+    bool "UART 4"
+    default n
+    select UART4_SERIALDRIVER
+    select ARCH_HAVE_SERIAL_TERMIOS
+
+config AM67_UART5
+    bool "UART 5"
+    default n
+    select UART5_SERIALDRIVER
+    select ARCH_HAVE_SERIAL_TERMIOS
+endmenu # UART Controllers
+
+# I2C
+menu "I2C Controllers"
+config AM67_I2C0
+    bool "I2C0"
+    default n
+    select AM67_I2C
+    select AM67_I2C0
+    select I2C_DRIVER
+
+config AM67_I2C1
+    bool "I2C1"
+    default n
+    select AM67_I2C
+    select AM67_I2C1
+    select I2C_DRIVER
+
+config AM67_I2C2
+    bool "I2C2"
+    default n
+    select AM67_I2C
+    select AM67_I2C2
+    select I2C_DRIVER
+
+config AM67_I2C3
+    bool "I2C2"
+    default n
+    select AM67_I2C
+    select AM67_I2C3
+    select I2C_DRIVER
+
+config AM67_I2C4
+    bool "I2C2"
+    default n
+    select AM67_I2C
+    select AM67_I2C4
+    select I2C_DRIVER
+
+endmenu # I2C Controllers
+
+# SPI
+menu "SPI Controllers"
+config AM67_SPI0
+    bool "SPI0"
+    default n
+    select AM67_SPI
+
+config AM67_SPI1
+    bool "SPI1"
+    default n
+    select AM67_SPI
+endmenu # SPI Controllers
+
+endmenu # TI AM67A Peripheral Support
 
 endif # ARCH_CHIP_AM67
+
